@@ -11,7 +11,7 @@
 #define ONE_WIRE_BUS  4
 #define V_LOAD_PIN    A0
 #define V_LOAD_PIN1   A1
-#define R_LOAD        5.5
+#define R_LOAD        10
 #define FINAL_VOLTAGE 0.2
 
 // TODO initialize the library with the numbers of the interface pins 
@@ -41,6 +41,7 @@ void loop() {
   if (batteryAttached) {
     if (testComplete) {
       Serial.println("Test complete");
+      delay(10000);
     } else {
       time_t t = now()-startTime; 
       uint8_t sec = second(t);
@@ -55,7 +56,7 @@ void loop() {
         joules += voltage * current;
         joules1 += voltage1 * current1;
         float wh = joules / 3600;
-        float wh1 = joules / 3600;
+        float wh1 = joules1 / 3600;
 
         //TODO Add lcd commands for jy-lkm1638
         
@@ -67,20 +68,15 @@ void loop() {
         Serial.print(",");
         Serial.print(joules);
         Serial.print(",");
-        Serial.print(wh)
-        Serial.print(",");
-        Serial.print(temp);
-
-        Serial.print(",");
+        Serial.print(wh);
+        Serial.print(", ");
         Serial.print(voltage1);
         Serial.print(",");
         Serial.print(current1);
         Serial.print(",");
         Serial.print(joules1);
         Serial.print(",");
-        Serial.print(wh1)
-        Serial.print(",");
-        Serial.print(temp1);
+        Serial.print(wh1);
         Serial.println();
         if (voltage < FINAL_VOLTAGE) {
           testComplete = true;
@@ -90,7 +86,7 @@ void loop() {
   } else {
     voltage = 5.0 * ((float) analogRead(V_LOAD_PIN)) / 1024.0;
     voltage1  = 5.0 * ((float) analogRead(V_LOAD_PIN1)) / 1024.0;
-    if (voltage > 0.02 || voltage1 > 0.02) {
+    if (voltage > 0.02) {
       startTime = now(); 
       batteryAttached = true;
       Serial.println("time,voltage,current,joules,temp");
